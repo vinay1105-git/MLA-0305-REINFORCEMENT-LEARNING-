@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Number of Subtasks,3.0
+Learning Rate (α),0.1
+Discount Factor (γ),0.95
+Max Episode Reward,30.0

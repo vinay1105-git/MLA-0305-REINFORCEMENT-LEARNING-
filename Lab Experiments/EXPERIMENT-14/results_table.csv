@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Buffer Capacity,10000.0
+Entropy Temperature (α),0.2
+Max Episode Reward,9.4
+Final Avg Reward (Last 20 Ep),-5.0

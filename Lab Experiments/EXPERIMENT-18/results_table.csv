@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,300.0
+Learning Rate (α),0.1
+Discount Factor (γ),0.9
+Exploration Rate (ε),0.2
+Max Joint Reward,4.0

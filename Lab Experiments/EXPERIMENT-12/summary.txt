@@ -1,0 +1,17 @@
+=========================================================
+EXPERIMENT 12: PROXIMAL POLICY OPTIMIZATION (PPO)
+=========================================================
+
+1. AIM:
+   To implement Proximal Policy Optimization (PPO) using a Clipped
+   Surrogate Objective function to enforce stable policy updates.
+
+2. PROCEDURE:
+   - Collect state trajectories under the old policy parameters pi_old.
+   - Calculate probability ratios r_t(theta) = pi_theta(a|s) / pi_old(a|s).
+   - Compute clipped objective: min(r_t * A_t, clip(r_t, 1-eps, 1+eps) * A_t).
+   - Perform multiple minibatch optimization epochs per trajectory.
+
+3. KEY TAKEAWAYS:
+   - Clipping prevents destructively large policy updates, maintaining monotonicity.
+   - Enables sample-efficient multi-epoch training over single trajectory batches.

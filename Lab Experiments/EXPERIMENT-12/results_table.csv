@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Clip Epsilon (ε),0.2
+PPO Epochs,3.0
+Actor LR (α),0.03
+Max Episode Reward,9.5

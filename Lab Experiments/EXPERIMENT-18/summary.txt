@@ -1,0 +1,3 @@
+EXPERIMENT 18: MULTI-AGENT RL (COORDINATION GAME)
+
+The implementation of a multi-agent reinforcement learning coordination game evaluates how decentralized agents converge toward mutually beneficial cooperative strategies under shared team rewards. Using independent Q-learning updates, both agents balance exploration and exploitation to discover that mutual cooperation yields optimal payoffs, whereas miscoordination results in severe penalties. Empirical metrics confirm that over iterative training episodes, agents successfully stabilize their policies toward the optimal joint action pair, demonstrating effective decentralized coordination.

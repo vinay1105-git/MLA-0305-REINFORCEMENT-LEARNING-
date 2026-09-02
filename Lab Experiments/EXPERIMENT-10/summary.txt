@@ -1,0 +1,16 @@
+=========================================================
+EXPERIMENT 10: POLICY GRADIENT METHODS (REINFORCE)
+=========================================================
+
+1. AIM:
+   To implement Monte Carlo Policy Gradient (REINFORCE) algorithm
+   to directly optimize parameterized policy probabilities.
+
+2. PROCEDURE:
+   - Parameterize policy using Softmax over action preference weights (theta).
+   - Generate full episode trajectories and compute Monte Carlo returns G_t.
+   - Update theta using policy gradient: theta <- theta + alpha * gamma^t * G_t * nabla log pi(A_t|S_t).
+
+3. KEY TAKEAWAYS:
+   - Policy Gradients optimize stochastic policies directly without value function tables.
+   - Avoids value function oscillation and handles continuous action spaces efficiently.

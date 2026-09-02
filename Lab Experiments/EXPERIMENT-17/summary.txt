@@ -1,0 +1,3 @@
+EXPERIMENT 17: MAXQ TASK DECOMPOSITION
+
+The implementation of the MAXQ hierarchical reinforcement learning algorithm successfully breaks down the global optimization objective into modular subtasks: navigation, item fetching, and final delivery. By decomposing the value function across multiple hierarchical layers, the agent learns subtask policies independently, which significantly reduces sample complexity and accelerates convergence compared to flat monolithic architectures. Empirical results demonstrate that states located further away from the terminal goal accumulate step penalties, whereas states closer to the target converge quickly to optimal values across all layers.

@@ -1,0 +1,16 @@
+=========================================================
+EXPERIMENT 11: ACTOR-CRITIC METHODS (A2C IMPLEMENTATION)
+=========================================================
+
+1. AIM:
+   To implement Advantage Actor-Critic (A2C) architecture combining
+   value-based evaluation (Critic) with policy-based action selection (Actor).
+
+2. PROCEDURE:
+   - Maintain Actor parameters (policy) and Critic parameters (baseline state value).
+   - Calculate Temporal Difference Advantage: A(s, a) = R + gamma * V(s') - V(s).
+   - Update Critic using TD error and Actor using Advantage-weighted policy gradient.
+
+3. KEY TAKEAWAYS:
+   - Advantage subtraction reduces Monte Carlo variance, speeding up gradient convergence.
+   - Online boot-strapped updates learn efficiently without waiting for full episode completion.

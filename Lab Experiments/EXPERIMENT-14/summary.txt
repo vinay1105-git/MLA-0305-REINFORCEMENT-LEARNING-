@@ -1,0 +1,16 @@
+=========================================================
+EXPERIMENT 14: SOFT ACTOR-CRITIC (SAC IMPLEMENTATION)
+=========================================================
+
+1. AIM:
+   To implement Soft Actor-Critic (SAC) utilizing Maximum Entropy RL
+   framework to optimize expected return and policy entropy concurrently.
+
+2. PROCEDURE:
+   - Construct Twin Q-Critics Q1(s,a), Q2(s,a) and stochastic Soft Actor pi(a|s).
+   - Formulate Soft State-Value targets incorporating entropy term: - alpha * log(pi).
+   - Update Twin Critics via MSE loss and Policy via KL-divergence minimization.
+
+3. KEY TAKEAWAYS:
+   - Entropy regularization encourages aggressive exploration and prevents early policy collapse.
+   - Twin Q-Functions successfully eliminate value overestimation bias.

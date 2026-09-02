@@ -1,0 +1,16 @@
+=========================================================
+EXPERIMENT 15: MODEL-BASED RL (DYNA-Q IMPLEMENTATION)
+=========================================================
+
+1. AIM:
+   To implement Dyna-Q, combining direct Reinforcement Learning
+   with Model Learning and simulated background planning updates.
+
+2. PROCEDURE:
+   - Execute real environment step and update Q-Table directly.
+   - Update transition model M(s, a) -> (r, s') using real experience.
+   - Perform 'n' background planning steps by sampling previous state-action pairs from M.
+
+3. KEY TAKEAWAYS:
+   - Model-based planning significantly reduces required real-world environmental interactions.
+   - Accelerated learning speed enables fast policy convergence in sample-constrained scenarios.

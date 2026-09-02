@@ -1,0 +1,16 @@
+=========================================================
+EXPERIMENT 16: MULTI-AGENT RL (INDEPENDENT Q-LEARNING)
+=========================================================
+
+1. AIM:
+   To implement Independent Q-Learning (IQL) for Multi-Agent Reinforcement Learning (MARL)
+   in a cooperative gridworld task with shared collision interactions.
+
+2. PROCEDURE:
+   - Instantiate separate independent Q-tables for Agent 1 and Agent 2.
+   - Execute simultaneous environment steps and evaluate joint transition rewards.
+   - Update each agent's individual policy independently assuming stationary environments.
+
+3. KEY TAKEAWAYS:
+   - IQL provides decentralization with zero inter-agent communication overhead.
+   - Handles non-stationarity in multi-agent settings to reach stable joint policies.

@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Buffer Capacity,10000.0
+Discount Factor (γ),0.99
+Final Epsilon (ε),0.01
+Max Reward Achieved,200.0

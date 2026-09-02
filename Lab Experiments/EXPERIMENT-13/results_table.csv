@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Buffer Capacity,10000.0
+Target Soft-Update (τ),0.05
+Max Action Limit,2.0
+Final Avg Reward (Last 20 Ep),-85.225

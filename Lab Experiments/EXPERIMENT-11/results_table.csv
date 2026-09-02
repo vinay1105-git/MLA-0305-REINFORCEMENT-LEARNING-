@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Actor LR (α_actor),0.05
+Critic LR (α_critic),0.1
+Discount Factor (γ),0.99
+Max Episode Reward,9.5

@@ -1,0 +1,16 @@
+=========================================================
+EXPERIMENT 9: DEEP Q-NETWORK (DQN) IMPLEMENTATION
+=========================================================
+
+1. AIM:
+   To implement Deep Q-Networks (DQN) combining Q-Learning with
+   discretized state-space function approximation and Experience Replay.
+
+2. PROCEDURE:
+   - Discretize continuous state vectors into state space buckets.
+   - Store trajectories (S, A, R, S', Done) inside Experience Replay Buffer.
+   - Sample transitions to decorrelate updates and update action values.
+
+3. KEY TAKEAWAYS:
+   - Experience Replay breaks temporal correlation for stable policy learning.
+   - Episode rewards steadily vary upwards as exploration transitions to exploitation.

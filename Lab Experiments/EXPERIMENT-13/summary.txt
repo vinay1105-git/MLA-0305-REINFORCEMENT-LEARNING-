@@ -1,0 +1,17 @@
+=========================================================
+EXPERIMENT 13: DEEP DETERMINISTIC POLICY GRADIENT (DDPG)
+=========================================================
+
+1. AIM:
+   To implement Deep Deterministic Policy Gradient (DDPG) algorithm
+   for continuous action-space control problems.
+
+2. PROCEDURE:
+   - Construct Deterministic Actor pi(s|theta) and Action-Value Critic Q(s, a|phi).
+   - Implement Experience Replay Buffer and continuous action exploration noise.
+   - Update Critic via TD-error and Actor via Deterministic Policy Gradient Theorem.
+   - Softly update target networks (theta' <- tau*theta + (1-tau)*theta') for tracking stability.
+
+3. KEY TAKEAWAYS:
+   - DDPG extends DQN principles to continuous control domains efficiently.
+   - Soft target network updates prevent deadly divergence and optimization instability.

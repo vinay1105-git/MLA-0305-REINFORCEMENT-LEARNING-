@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Number of Agents,2.0
+Learning Rate (α),0.1
+Max Joint Reward,178.1
+Final Avg Reward (Last 20 Ep),30.925

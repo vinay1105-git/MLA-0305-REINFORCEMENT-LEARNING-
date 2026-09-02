@@ -1,0 +1,6 @@
+Metric,Value
+Total Episodes,200.0
+Planning Steps (n),10.0
+Learning Rate (α),0.1
+Max Episode Reward,9.5
+Final Avg Reward (Last 20 Ep),9.46
