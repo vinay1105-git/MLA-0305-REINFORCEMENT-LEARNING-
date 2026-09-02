@@ -1,0 +1,284 @@
+library(shiny)
+library(DT)
+
+source("helpers.R")
+source("graph.R")
+source("theme.R")
+
+ui <- fluidPage(
+  phoenix_theme(),
+  
+  titlePanel("Project Phoenix - Desktop AI Simulation Engine"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      h4("Module 1: Population Settings"),
+      selectInput("preset_scenario", "Scenario Preset:", 
+                  choices = c("Custom", "Outbreak Emergency", "Resource Scarcity", "High-Threat Invasion")),
+      numericInput("num_agents", "Number of Agents:", value = 1000, min = 100, max = 10000, step = 100),
+      numericInput("num_clusters", "GMM Clusters:", value = 3, min = 2, max = 10, step = 1),
+      numericInput("seed_val", "Random Seed:", value = 123, min = 1),
+      actionButton("generate_btn", "Generate Dataset", class = "btn-primary", style = "width: 100%;"),
+      
+      hr(),
+      h4("Module 4: MARL Hyperparameters"),
+      sliderInput("rl_episodes", "Simulation Episodes:", min = 10, max = 200, value = 50, step = 10),
+      sliderInput("rl_alpha", "Learning Rate (Alpha):", min = 0.01, max = 0.5, value = 0.1, step = 0.01),
+      sliderInput("rl_gamma", "Discount Factor (Gamma):", min = 0.5, max = 0.99, value = 0.90, step = 0.01),
+      sliderInput("rl_epsilon", "Exploration Rate (Epsilon):", min = 0.05, max = 0.50, value = 0.20, step = 0.05),
+      actionButton("run_sim_btn", "Run Hybrid Simulation", class = "btn-success", style = "width: 100%;"),
+      
+      hr(),
+      h4("Data Filters"),
+      selectInput("filter_agent_type", "Filter Agent Type:", choices = c("All")),
+      sliderInput("filter_health", "Min Health Score:", min = 0, max = 100, value = 0),
+      
+      hr(),
+      h4("Export Center"),
+      downloadButton("download_csv", "Export Filtered Dataset CSV", style = "width: 100%;"),
+      br(), br(),
+      downloadButton("download_metrics", "Export Model Evaluation CSV", style = "width: 100%;"),
+      br(), br(),
+      downloadButton("download_strategy", "Export Survival Strategy TXT", style = "width: 100%;")
+    ),
+    
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Data Table (Mod 1 & 2)", 
+                 br(),
+                 DTOutput("dataset_table")
+        ),
+        tabPanel("Agent Analytics (Mod 2)", 
+                 br(),
+                 h4("Average Metrics by Agent Type"),
+                 tableOutput("agent_summary_table"),
+                 hr(),
+                 plotOutput("plot_survival")
+        ),
+        tabPanel("Spatial Mapping (Mod 3)", 
+                 br(),
+                 h4("Cluster Centroids (Average Coordinates)"),
+                 tableOutput("centroid_table"),
+                 hr(),
+                 fluidRow(
+                   column(6, plotOutput("plot_spatial")),
+                   column(6, plotOutput("plot_density"))
+                 )
+        ),
+        tabPanel("RL Simulation & Strategy (Mod 4)", 
+                 br(),
+                 h4("Learned Q-Table Policy Matrix"),
+                 tableOutput("q_table_output"),
+                 hr(),
+                 h4("Generated Optimal Survival Strategy"),
+                 verbatimTextOutput("strategy_output"),
+                 hr(),
+                 fluidRow(
+                   column(6, plotOutput("plot_rl_reward")),
+                   column(6, plotOutput("plot_rl_survival"))
+                 )
+        ),
+        tabPanel("Hybrid Evaluation & Comparison (Mod 5 & 6)", 
+                 br(),
+                 h4("Hybrid Component Performance Comparison Metrics"),
+                 tableOutput("model_comp_table"),
+                 hr(),
+                 plotOutput("plot_model_comparison")
+        ),
+        tabPanel("Cluster Distribution", 
+                 br(),
+                 plotOutput("plot_cluster")
+        )
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  
+  dataset_rv <- reactiveVal(NULL)
+  rl_result_rv <- reactiveVal(NULL)
+  comp_df_rv <- reactiveVal(NULL)
+  
+  # Scenario Presets logic
+  observeEvent(input$preset_scenario, {
+    if (input$preset_scenario == "Outbreak Emergency") {
+      updateNumericInput(session, "num_agents", value = 1500)
+      updateNumericInput(session, "num_clusters", value = 4)
+      updateSliderInput(session, "rl_episodes", value = 80)
+    } else if (input$preset_scenario == "Resource Scarcity") {
+      updateNumericInput(session, "num_agents", value = 800)
+      updateNumericInput(session, "num_clusters", value = 3)
+      updateSliderInput(session, "rl_episodes", value = 60)
+    } else if (input$preset_scenario == "High-Threat Invasion") {
+      updateNumericInput(session, "num_agents", value = 2000)
+      updateNumericInput(session, "num_clusters", value = 5)
+      updateSliderInput(session, "rl_episodes", value = 100)
+    }
+  })
+  
+  # Auto-initialize dataset on app start
+  observe({
+    if (is.null(dataset_rv())) {
+      df <- generate_dataset(n = 1000, g = 3, seed = 123)
+      dataset_rv(df)
+      
+      updateSelectInput(session, "filter_agent_type", 
+                        choices = c("All", unique(df$Agent_Type)))
+      
+      rl_res <- run_rl_simulation(df, episodes = 50, alpha = 0.1, gamma = 0.9, epsilon = 0.2)
+      rl_result_rv(rl_res)
+      
+      comp_df <- evaluate_hybrid_models(df, rl_res$history)
+      comp_df_rv(comp_df)
+    }
+  })
+  
+  # Regenerate Dataset
+  observeEvent(input$generate_btn, {
+    df <- generate_dataset(n = input$num_agents, g = input$num_clusters, seed = input$seed_val)
+    dataset_rv(df)
+    
+    updateSelectInput(session, "filter_agent_type", 
+                      choices = c("All", unique(df$Agent_Type)))
+    
+    if (!dir.exists("data")) dir.create("data")
+    write.csv(df, "data/phoenix_dataset.csv", row.names = FALSE)
+  })
+  
+  # Run Hybrid Simulation with UI Hyperparameters
+  # Run Hybrid Simulation with UI Hyperparameters
+  observeEvent(input$run_sim_btn, {
+    req(dataset_rv())
+    df <- dataset_rv()
+    
+    rl_res <- run_rl_simulation(
+      df, 
+      episodes = input$rl_episodes, 
+      alpha = input$rl_alpha,
+      gamma = input$rl_gamma,
+      epsilon = input$rl_epsilon
+    )
+    
+    # Update state with simulated spatial positions & RL history
+    rl_result_rv(rl_res)
+    if (!is.null(rl_res$updated_df)) {
+      dataset_rv(rl_res$updated_df)
+    }
+    
+    comp_df <- evaluate_hybrid_models(df, rl_res$history)
+    comp_df_rv(comp_df)
+    
+    generate_all_graphs(rl_res$updated_df, rl_res$history, comp_df)
+  })
+  # Filtered Data Reactive Pipeline
+  filtered_df <- reactive({
+    req(dataset_rv())
+    df <- dataset_rv()
+    
+    if (input$filter_agent_type != "All") {
+      df <- df[df$Agent_Type == input$filter_agent_type, ]
+    }
+    
+    df <- df[df$Health >= input$filter_health, ]
+    return(df)
+  })
+  
+  output$dataset_table <- renderDT({
+    req(filtered_df())
+    datatable(filtered_df(), options = list(pageLength = 10, scrollX = TRUE))
+  })
+  
+  output$agent_summary_table <- renderTable({
+    req(filtered_df())
+    calculate_agent_stats(filtered_df())
+  }, striped = TRUE, hover = TRUE)
+  
+  output$centroid_table <- renderTable({
+    req(filtered_df())
+    calculate_centroid(filtered_df())
+  }, striped = TRUE, hover = TRUE)
+  
+  output$q_table_output <- renderTable({
+    req(rl_result_rv())
+    as.data.frame(rl_result_rv()$q_table)
+  }, rownames = TRUE, striped = TRUE, hover = TRUE)
+  
+  output$strategy_output <- renderText({
+    req(rl_result_rv())
+    generate_survival_strategy(rl_result_rv()$q_table)
+  })
+  
+  output$model_comp_table <- renderTable({
+    req(comp_df_rv())
+    comp_df_rv()
+  }, striped = TRUE, hover = TRUE)
+  
+  # Plot Renderers
+  output$plot_cluster <- renderPlot({
+    req(filtered_df())
+    plot_cluster_distribution(filtered_df())
+  })
+  
+  output$plot_spatial <- renderPlot({
+    req(filtered_df())
+    plot_agent_locations(filtered_df())
+  })
+  
+  output$plot_density <- renderPlot({
+    req(filtered_df())
+    plot_spatial_density(filtered_df())
+  })
+  
+  output$plot_survival <- renderPlot({
+    req(filtered_df())
+    plot_survival_vs_infection(filtered_df())
+  })
+  
+  output$plot_rl_reward <- renderPlot({
+    req(rl_result_rv())
+    plot_rl_learning_curve(rl_result_rv()$history)
+  })
+  
+  output$plot_rl_survival <- renderPlot({
+    req(rl_result_rv())
+    plot_rl_survival_trend(rl_result_rv()$history)
+  })
+  
+  output$plot_model_comparison <- renderPlot({
+    req(comp_df_rv())
+    plot_model_comparison(comp_df_rv())
+  })
+  
+  # Export Handlers
+  output$download_csv <- downloadHandler(
+    filename = function() {
+      paste0("phoenix_dataset_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write.csv(filtered_df(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_metrics <- downloadHandler(
+    filename = function() {
+      paste0("phoenix_model_evaluation_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      req(comp_df_rv())
+      write.csv(comp_df_rv(), file, row.names = FALSE)
+    }
+  )
+  
+  output$download_strategy <- downloadHandler(
+    filename = function() {
+      paste0("phoenix_survival_strategy_", Sys.Date(), ".txt")
+    },
+    content = function(file) {
+      req(rl_result_rv())
+      writeLines(generate_survival_strategy(rl_result_rv()$q_table), file)
+    }
+  )
+}
+
+shinyApp(ui = ui, server = server)
